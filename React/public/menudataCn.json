@@ -1,0 +1,167 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "path": "自动化测试",
+      "name": "自动化测试",
+      "icon": "mail",
+      "children": [
+        {
+          "id": "1-1",
+          "path": "/bed/autotest/scenetest",
+          "name": "场景测试"
+        },
+        {
+          "id": "1-2",
+          "path": "/bed/autotest/compList",
+          "name": "组件测试"
+        },
+        {
+          "id": "1-3",
+          "path": "/bed/autotest/mytesttask",
+          "name": "我的测试任务"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "path": "测试管理",
+      "name": "测试管理",
+      "icon": "appstore",
+      "children": [
+        {
+          "id": "2-1",
+          "path": "/bed/testmanage/testcasemanage",
+          "name": "测试例管理"
+        },
+        {
+          "id": "2-2",
+          "path": "/bed/testmanage/testtoolsmanage",
+          "name": "测试工具管理"
+        },
+        {
+          "id": "2-3",
+          "path": "/bed/testmanage/testobjsmanage",
+          "name": "测试对象管理"
+        },
+        {
+          "id": "2-4",
+          "path": "/bed/testmanage/testbedsmanage",
+          "name": "测试床管理"
+        },
+        {
+          "id": "2-5",
+          "path": "/bed/testmanage/testtasksmanage",
+          "name": "测试任务管理"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "path": "测试设计",
+      "name": "测试设计",
+      "icon": "setting",
+      "children": [
+        {
+          "id": "3-1",
+          "path": "/bed/testdesign/scenetestdesign",
+          "name": "场景测试设计"
+        },
+        {
+          "id": "3-2",
+          "path": "/bed/testdesign/componenttestdesign",
+          "name": "组件测试设计"
+        },
+        {
+          "id": "3-3",
+          "path": "/bed/testdesign/templatetestdesign",
+          "name": "模板测试设计"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "path": "评分认证",
+      "name": "评分认证",
+      "icon": "trophy",
+      "children": [
+        {
+          "id": "4-1",
+          "path": "/bed/",
+          "name": "评分规则管理"
+        },
+        {
+          "id": "4-2",
+          "path": "/bed/",
+          "name": "认证规则管理"
+        },
+        {
+          "id": "4-3",
+          "path": "/bed/",
+          "name": "已认证测试"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "path": "集成交付",
+      "name": "集成交付",
+      "icon": "windows",
+      "children": [
+        {
+          "id": "5-1",
+          "path": "/bed/",
+          "name": "安装源管理"
+        },
+        {
+          "id": "5-2",
+          "path": "/bed/",
+          "name": "局端管理"
+        },
+        {
+          "id": "5-3",
+          "path": "/bed/",
+          "name": "集成交付工具管理"
+        },
+        {
+          "id": "5-4",
+          "path": "/bed/",
+          "name": "集成化交付"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "path": "系统管理",
+      "name": "系统管理",
+      "icon": "user",
+      "children": [
+        {
+          "id": "6-1",
+          "path": "/bed/",
+          "name": "用户管理"
+        },
+        {
+          "id": "6-2",
+          "path": "/bed/",
+          "name": "角色管理"
+        },
+        {
+          "id": "6-3",
+          "path": "/bed/",
+          "name": "权限管理"
+        },
+        {
+          "id": "6-4",
+          "path": "/bed/",
+          "name": "元数据管理"
+        },
+        {
+          "id": "6-5",
+          "path": "/bed/custom",
+          "name": "定制首页"
+        }
+      ]
+    }
+  ]
+}

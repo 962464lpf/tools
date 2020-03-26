@@ -1,0 +1,14 @@
+.nav-menu {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  position: relative;
+  .coolapsed {
+    position: absolute;
+    top: 20px;
+    left: 50px;
+  }
+  .ant-menu {
+    height: 100%;
+  }
+}

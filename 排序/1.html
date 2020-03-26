@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body></body>
+</html>
+<script>
+  function Merger(a, b) {
+    // left
+    var n = a && a.length;
+    // right
+    var m = b && b.length;
+    var c = [];
+    var i = 0;
+    var j = 0;
+
+    while (i < n && j < m) {
+      if (a[i] < b[j]) {
+        c.push(a[i++]);
+      } else {
+        c.push(b[j++]);
+      }
+    }
+
+    while (i < n) c.push(a[i++]);
+
+    while (j < m) c.push(b[j++]);
+
+    return c;
+  }
+  function merge_sort(arr) {
+    debugger;
+    if (arr.length == 1) {
+      return arr;
+    }
+
+    var mid = Math.floor(arr.length / 2);
+    var left = arr.slice(0, mid);
+    var right = arr.slice(mid);
+
+    return Merger(merge_sort(left), merge_sort(right)); //合并左右部分
+  }
+  let unOrder = [10, 5, 3, 2, 1, 4, 12, 6, 7, 8, 9];
+  let order = merge_sort(unOrder);
+  console.log(order);
+</script>

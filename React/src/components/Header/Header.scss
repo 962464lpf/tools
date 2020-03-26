@@ -1,0 +1,22 @@
+header{
+  background: #00c1d4;
+  height: 50px;
+  .ant-row{
+    height: 100%;
+    .ant-col{
+      font-size: 16px;
+      height: 100%;
+      line-height: 50px;
+      color: white;
+    }
+    .ant-col:first-child{
+      padding-left: 20px;
+      img{
+        height: 50px;
+      }
+    }
+    .sep{
+      border-right: 1px solid white;
+    }
+  }
+}

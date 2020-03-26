@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--<html>-->
+
+<!--<head>-->
+    <!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+    <!--<title>Example 1</title>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<h1>Example 1</h1>-->
+<!--<script>-->
+    <!--var blobObject = new Blob(["I scream. You scream. We all scream for ice cream."]);-->
+
+    <!--window.navigator.msSaveBlob(blobObject, 'msSaveBlob_testFile.txt'); // The user only has the option of clicking the Save button.-->
+    <!--alert('File save request made using msSaveBlob() - note the single "Save" button below.');-->
+
+    <!--var fileData = ["Before you insult a person, walk a mile in their shoes. That way, when you insult them, you'll be a mile away - and have their shoes."];-->
+    <!--blobObject = new Blob(fileData);-->
+    <!--window.navigator.msSaveOrOpenBlob(blobObject, 'msSaveBlobOrOpenBlob_testFile.txt'); // Now the user will have the option of clicking the Save button and the Open button.-->
+    <!--alert('File save request made using msSaveOrOpenBlob() - note the two "Open" and "Save" buttons below.');-->
+<!--</script>-->
+<!--</body>-->
+
+<!--</html>-->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>绘制阴影-绘制文字</title>
+</head>
+<body>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script type="text/javascript">
+    var oCanvas = document.getElementById("canvas");
+    var context = oCanvas.getContext("2d");
+    context.fillStyle = "#ededed";
+    context.fillRect(0, 0, 500, 500);
+    //径向渐变
+    context.beginPath(); //开始
+    var grdCirle = context.createRadialGradient(100, 100, 50, 100, 100, 100);
+    //(xStart,yStart,radiusStart)起点圆的中心点坐标和半径，（xEnd,yEnd,radiusEnd）终点圆的中心点坐标和半径
+    grdCirle.addColorStop(0, "#f7f8fa"); //起点
+    grdCirle.addColorStop(0.5, "red");
+    grdCirle.addColorStop(1, "#53c5d9"); //终点
+    context.fillStyle = grdCirle;
+    context.arc(100, 100, 100, 0, 2 * Math.PI); //画一个圆
+    context.shadowOffsetX = 2;    //阴影往左边偏，横向位移量
+    context.shadowOffsetY = 4;   //阴影往左边偏，纵向位移量
+    context.shadowColor = "rgba(0,0,0,0.3)"; //阴影颜色
+    context.shadowBlur = 10; //阴影的模糊范围
+    context.fill(); //填充
+    context.closePath(); //关上
+
+
+    //绘制文字
+    context.fillStyle= "#000"; //文字颜色
+    context.font = "24px Helvetica, Arial, sans-serif;";//字体
+    context.fillText("球体",20,30);
+
+
+
+</script>
+</body>
+</html>

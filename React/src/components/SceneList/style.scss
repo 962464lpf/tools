@@ -1,0 +1,21 @@
+.sceneList{
+  height: 180px;
+  .ant-row { 
+    height: 100%;
+    div {
+      background: transparent;
+      border: 0;
+      height: 100%;
+      .ant-col{
+        height: 100%;
+      }
+      .gutter-box {
+        padding: 5px 10px;
+        text-align: center;
+        background: white;
+        height: 100%;
+        border-radius: 15px;
+      }
+    }
+  }
+}

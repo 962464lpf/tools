@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="#two">click to change hash two</a>
+    <button onclick="location.hash='a'+Math.random()">随机hash</button>
+
+    <div id="app">
+        <div @click='addList'>添加list</div>
+        <div @click='getHash'>获取hash</div>
+        <div v-for="(item,index) in list" @click='setHash(item)' :key="index">设置hash{{item}}</div>
+        <div v-for="(item,index) in list" :key="index + 'ss'">
+            <span v-if='hash === "#" + item '>{{item}}</span>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="./router.js">
+</script>
+<script>
+    console.log(new VueRouter({
+        path: '/22',
+        name: 'index',
+        component: 'index'
+    }))
+
+    let vue = new Vue({
+        el: '#app ',
+        router: new VueRouter({
+            path: '/22',
+            name: 'index',
+            component: 'index'
+        }),
+        data: {
+            msg: '2323 ',
+            list: [1, 2, 3, 4, 5, 6],
+            hash: ' '
+        },
+        watch: {
+            hash(val) {}
+        },
+        methods: {
+            addList() {
+                this.list.push(this.list.length + 1)
+            },
+            getHash() {
+                console.log(location.hash)
+            },
+            setHash(type) {
+                location.hash = type
+                this.hash = location.hash
+                console.log(this.hash)
+            }
+        },
+        mounted() {
+            this.hash = location.hash
+        }
+    })
+
+    console.log(vue)
+    console.log(vue.$router)
+    let stack = 'a/c/d'.replace(/^\//, '').split('/')
+    stack.unshift('')
+    console.log(stack.join('/'))
+
+    console.log('https://router.vuejs.org/zh/api/#append'.replace(/\/\//g, '/'))
+
+    // console.log(key.match(/([A-Za-z0-9-_]+)\./i))
+
+    console.log('(?fs)'.match(/\((?!\?)/g))
+
+    let aaaa = {
+        a: 1,
+        b: 2
+    }
+    console.log(aaaa && aaaa.c)
+
+    var PATH_REGEXP = new RegExp([
+        // Match escaped characters that would otherwise appear in future matches.
+        // This allows the user to escape special characters that won't transform.
+        '(\\\\.)',
+        // Match Express-style parameters and un-named parameters with a prefix
+        // and optional suffixes. Matches appear as:
+        //
+        // "/:test(\\d+)?" => ["/", "test", "\d+", undefined, "?", undefined]
+        // "/route(\\d+)"  => [undefined, undefined, undefined, "\d+", undefined, undefined]
+        // "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
+        '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^\\\\()])+)\\))?|\\(((?:\\\\.|[^\\\\()])+)\\))([+*?])?|(\\*))'
+    ].join('|'), 'g');
+
+    function escapeGroup(group) {
+        return group.replace(/([=!:$\/()])/g, '\\$1')
+    }
+
+    function escapeString(str) {
+        return str.replace(/([.+*?=^!:${}()[\]|\/\\])/g, '\\$1')
+    }
+
+    let c =
+        `(\\.)|
+    ([\/.])?
+    (?:
+        (?:\:
+            (\w+)
+            (?:
+            \((
+                    (?:\\.|[^\\()])
+              +)
+            \)
+        )?|
+        \(
+            (
+                (?:\\.|[^\\()])+)
+        \))
+        ([+*?])?|
+        (\*)
+    )`
+
+    let drep = /([0])|([7])/g
+    console.log(drep.exec('./.567/../70'))
+    console.log('=!:/()'.replace(/([=!:$\/()])/g, '\\$1 '))
+
+    // let res
+    // console.log(res)
+    // let i = 0
+    // while ((res = drep.exec('./.56')) !== null) {
+    //     console.log(res)
+    //     res.index++
+    //         i++
+    //         if (i > 10) break
+    // }
+
+    function parse(str, options) {
+        var tokens = [];
+        var key = 0;
+        var index = 0;
+        var path = '';
+        var defaultDelimiter = options && options.delimiter || '/';
+        var res;
+
+        // exec 检索字符串中指定的值。返回找到的值，并确定其位置。
+        // res = ["/*", undefined, "/", undefined, undefined, undefined, undefined, "*", index: 0, input: "/*", groups: undefined]
+        while ((res = PATH_REGEXP.exec(str)) != null) {
+            var m = res[0];
+            var escaped = res[1];
+            var offset = res.index;
+            // str "/*"
+            path += str.slice(index, offset);
+            index = offset + m.length;
+
+            // Ignore already escaped sequences.
+            if (escaped) {
+                path += escaped[1];
+                continue
+            }
+
+            var next = str[index];
+            var prefix = res[2];
+            var name = res[3];
+            var capture = res[4];
+            var group = res[5];
+            var modifier = res[6];
+            var asterisk = res[7];
+
+            // Push the current path onto the tokens.
+            if (path) {
+                tokens.push(path);
+                path = '';
+            }
+
+            var partial = prefix != null && next != null && next !== prefix;
+            var repeat = modifier === '+' || modifier === '*';
+            var optional = modifier === '?' || modifier === '*';
+            var delimiter = res[2] || defaultDelimiter;
+            var pattern = capture || group;
+
+            tokens.push({
+                name: name || key++,
+                prefix: prefix || '',
+                delimiter: delimiter,
+                optional: optional,
+                repeat: repeat,
+                partial: partial,
+                asterisk: !!asterisk,
+                pattern: pattern ? escapeGroup(pattern) : (asterisk ? '.*' : '[^' + escapeString(delimiter) + ']+?')
+            });
+        }
+
+        // Match any characters still remaining.
+        if (index < str.length) {
+            path += str.substr(index);
+        }
+
+        // If the path exists, push it onto the end.
+        if (path) {
+            tokens.push(path);
+        }
+
+        return tokens
+    }
+    console.log(parse('\*/*', {}))
+
+
+    var regexpCompileCache = Object.create(null);
+    let path = void 0
+    var filler = regexpCompileCache[path]
+    console.log(filler)
+
+    function afun() {
+        return /[a]/
+    }
+    let bbb = afun.compile('path')
+    console.log(bbb)
+</script>
+<!-- 
+<script>
+    function isError(err) {
+        console.log('...........')
+        console.log(err)
+        console.log(Object.prototype.toString.call(err).indexOf('Error') > -1)
+        console.log('...........')
+    }
+    isError(new Error('Error'))
+
+    console.log(typeof(undefined && '23'))
+
+    var encodeReserveRE = /[!'()*]/g;
+    console.log(encodeReserveRE.test("!fsfs"))
+
+    console.log(encodeURIComponent('http://www.w3school.com.cn'))
+    console.log(decodeURIComponent(encodeURIComponent('http://www.w3school.com.cn')))
+
+    var decode = decodeURIComponent;
+
+    function parseQuery(query) {
+        var res = {};
+
+        query = query.trim().replace(/^(\?|#|&)/, '');
+        if (!query) {
+            return res
+        }
+
+        query.split('&').forEach(function(param) {
+            var parts = param.replace(/\+/g, ' ').split('=');
+            var key = decode(parts.shift());
+            var val = parts.length > 0 ?
+                decode(parts.join('=')) :
+                null;
+            console.log(parts.join('='))
+            if (res[key] === undefined) {
+                res[key] = val;
+            } else if (Array.isArray(res[key])) {
+                alert(2)
+                res[key].push(val);
+            } else {
+                alert(3)
+                res[key] = [res[key], val];
+            }
+        });
+
+        return res
+    }
+    console.log(parseQuery('? action = get_post_info & action2 = 2222222'))
+
+    console.log(void 0)
+
+
+    function stringifyQuery(obj) {
+        var res = obj ? Object.keys(obj).map(function(key) {
+            var val = obj[key];
+            if (val === undefined) {
+                return ''
+            }
+
+            if (val === null) {
+                return encode(key)
+            }
+
+            if (Array.isArray(val)) {
+                var result = [];
+                val.forEach(function(val2) {
+                    if (val2 === undefined) {
+                        return
+                    }
+                    if (val2 === null) {
+                        result.push(encode(key));
+                    } else {
+                        result.push(encode(key) + '=' + encode(val2));
+                    }
+                });
+                return result.join('&')
+            }
+
+            return encode(key) + '=' + encode(val)
+        }).filter(function(x) {
+            return x.length > 0;
+        }).join('&') : null;
+        return res ? ("?" + res) : ''
+    }
+    var encodeReserveRE = /[!'()*]/g; // ，包含!或者'或者()
+    var encodeReserveReplacer = function(c) {
+        return '%' + c.charCodeAt(0).toString(16);
+    };
+    var commaRE = /%2C/g;
+
+    // fixed encodeURIComponent which is more conformant to RFC3986:
+    // - escapes [!'()*]
+    // - preserve commas
+    /**
+     * 功能: 将一个字符串进行URI编码，！' () 转化为%+字符的十六进制，转化后为%2C的转化为，
+     * @param {string} str 
+     */
+    var encode = function(str) {
+        // 将含有！' ()的字符替换为%+字符串的十六进制
+        return encodeURIComponent(str)
+            .replace(encodeReserveRE, encodeReserveReplacer)
+            // 将%2C替换为，
+            .replace(commaRE, ',');
+    };
+    let queryObj = parseQuery('? action = get_post_info & 1 = 2222222')
+    console.log(stringifyQuery(queryObj))
+
+    var trailingSlashRE = /\/$/;
+    console.log(trailingSlashRE.test('https:developers.weixin.qq.comebook///5'))
+    console.log('https://developers.weixin.qq.com/ebook/'.replace(trailingSlashRE, '222'))
+
+
+    // createRoute(null, {
+    //     path: '/'
+    // })
+    let f = this.VueRouter
+    let app = new f()
+    console.log(app)
+    console.log()
+
+
+    function formatMatch(record) {
+        var res = [];
+        while (record) {
+            res.unshift(record);
+            record = record.parent;
+        }
+        return res
+    }
+    // let record = [{
+    //         parent: 1,
+    //         a: 1
+    //     }, {
+    //         parent: 2
+    //     }]
+    let record = {
+        parent: 1,
+        a: 1
+    }
+    console.log(formatMatch(record))
+        // formatMatch(record)
+
+
+    let aobj = {
+        a: 1
+    }
+    let bobj = {
+        a: 1
+    }
+    console.log(Object)
+</script> -->

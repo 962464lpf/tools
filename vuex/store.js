@@ -1,0 +1,2 @@
+ (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global: this
+ console.log((typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this)

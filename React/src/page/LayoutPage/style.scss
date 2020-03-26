@@ -1,0 +1,43 @@
+.layout-page {
+  height: 100%;
+  background: #eee;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .content {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    .folding,
+    .spread {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      font-size: 16px;
+      color: white;
+      border-radius: 50%;
+      background: #1890ff;
+      line-height: 20px;
+      z-index: 99;
+    }
+    .folding {
+      left: 190px;
+    }
+    .spread {
+      left: 70px;
+    }
+    .ant-layout {
+      height: 100%;
+    }
+    .left {
+      background: #eee;
+    }
+    .right {
+      padding: 20px;
+    }
+  }
+}

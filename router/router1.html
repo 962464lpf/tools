@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <router-view></router-view> -->
+        <button @click='go'>前进</button>
+        <button @click='back'>后退</button>
+        <button @click='push'>添加</button>
+        <button @click='replace'>修改</button>
+        <div id="box" style="height: 20px; width: 20px;"></div>
+    </div>
+</body>
+
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="./router.js"></script>
+<script>
+    // Vue.use(VueRouter) 相当于执行VueRouter.install()  将VueRouter绑定到Vue中
+    VueRouter.install(Vue)
+    Vue.use(VueRouter)
+        // 实例化VueRouter
+    let Router = new VueRouter({
+            mode: 'history',
+            routes: [{
+                path: '/b/才',
+                name: 'index'
+            }, {
+                path: '/a',
+                name: 'index2'
+            }]
+        })
+        // 
+    console.log(Router)
+    let vue1 = new Vue({
+        el: '#app',
+        Router: Router,
+        methods: {
+            consoleHistory() {
+                console.log(window.history.length)
+            },
+            go() {
+                window.history.go(1)
+
+                console.log(this)
+            },
+            back() {
+                window.history.back()
+                this.consoleHistory()
+
+            },
+            push() {
+                let stateObj = {
+                    foo: "bar",
+                }
+                window.history.pushState({}, 'title', 'router.html')
+                this.consoleHistory()
+            },
+            replace() {
+                window.history.pushState('replace', 'replace', './replace')
+                this.consoleHistory()
+            }
+        }
+    })
+
+    let string = 'lpflwh'
+    console.log(string.match(/lf/g))
+    console.log(window.history.replaceState)
+    let Time = typeof window !== 'undefined' && window.performance && window.performance.now ?
+        window.performance :
+        Date;
+    console.log(window.performance.navigation.type)
+    console.log(Time.now().toFixed(3))
+    let length = window.history.length
+    console.log(length)
+
+    console.log(window.location.origin)
+    console.log(window.location)
+
+
+
+    function callFun(a, b) {
+        return {
+            a: a,
+            b: b
+        }
+    }
+    let o = callFun.call(this, 1, 2)
+    console.log(o)
+
+    var docEl = document.documentElement;
+    var docRect = docEl.getBoundingClientRect();
+    console.log(docRect)
+
+    var box = document.getElementById('box').getBoundingClientRect();
+    var box = document.getElementById('box').getBoundingClientRect();
+    console.log(box)
+
+    console.log(window.navigator.userAgent)
+
+
+    function runQueue(queue, fn, cb) {
+        var step = function(index) {
+            if (index >= queue.length) {
+                cb();
+            } else {
+                // 队列值不为空
+                if (queue[index]) {
+                    // fn第一个参数是队列的值，第二个参数是一个回调函数，函数值里边是从当前队列
+                    // 一直执行队列后的队列，最后执行cb(),通知调用者队列已经执行完毕
+                    // 数据
+                    fn(queue[index], function() {
+                        step(index + 1);
+                    });
+                } else {
+                    step(index + 1);
+                }
+            }
+        };
+        step(0);
+    }
+    let queue = [1, 2, 3, 's']
+    let iindex = 0
+
+    function fn(val, cb) {
+        iindex++
+        // alert(iindex)
+        console.log(val)
+        cb()
+    }
+
+    function cb() {
+        console.log('fsfs')
+    }
+    runQueue(queue, fn, cb)
+
+    function resolveAsyncComponents() {
+        return function() {
+            alert(1)
+        }
+    }
+    var queue111 = [].concat(
+
+        resolveAsyncComponents()
+    );
+    console.log(queue111)
+
+    function flatten(arr) {
+        return Array.prototype.concat.apply([], arr)
+    }
+    let aaaaaa = flatten(queue.map(function(m) {
+        return m
+    }))
+    console.log(Symbol.toStringTag)
+    let baseurl = 'http://element.eleme.cn/2.9/#/zh-CN/component/tag'
+    let nase = baseurl.replace(/^https?:\/\/[^\/]+/, '');
+    console.log(nase)
+
+
+    let regrega = /a/
+    let regregb = /z/
+    let regArr = ['abf', 'ffsf', 'fas']
+    console.log(regArr.join('').match(regrega, regregb))
+    let Abcdef = function(c, d) {
+        console.log(111111)
+    }
+    Abcdef.prototype.a = function() {}
+    console.log(Abcdef.prototype.constructor === Abcdef)
+    let runcall = Abcdef.call(this)
+
+    console.log(Abcdef)
+
+    function getHash(href) {
+        // We can't use window.location.hash here because it's not
+        // consistent across browsers - Firefox will pre-decode it!
+        var index = href.indexOf('#');
+        // empty path
+        if (index < 0) {
+            return ''
+        }
+
+        href = href.slice(index + 1);
+        // decode the hash but not the search or hash
+        // as search(query) is already decoded
+        // https://github.com/vuejs/vue-router/issues/2708
+        var searchIndex = href.indexOf('?');
+        console.log(searchIndex)
+        if (searchIndex < 0) {
+            var hashIndex = href.indexOf('#');
+            console.log(hashIndex)
+            if (hashIndex > -1) {
+                href = decodeURI(href.slice(0, hashIndex)) + href.slice(hashIndex);
+            } else {
+                href = decodeURI(href);
+            }
+        } else {
+            if (searchIndex > -1) {
+                href = decodeURI(href.slice(0, searchIndex)) + href.slice(searchIndex);
+            }
+        }
+
+        return href
+    }
+    let href = 'http://localhost:8080/#sfs/sut?fsf'
+    console.log(getHash(href))
+</script>

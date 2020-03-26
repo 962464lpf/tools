@@ -1,0 +1,46 @@
+1. 引入VueRouter组件之后，最外层的自运行函数执行时：
+    global.VueRouter = factory()
+    global为第一个参数，this(vue). 第二个参数为一个匿名函数，执行之后返回VueRouter.
+    匿名函数中也有自运行函数运行之后得到  HTML5History  HashHistory  AbstractHistory 这三个路由类，
+    全部都可以得到History类中的方法，因为圆形函数指向了History, 以后定义路由模式所用。
+2. Vue.use(VueRouter)作用是执行VueRouter.install(). Vue.use()方法是加载插件，执行插件中的install方法。
+  在install中执行init方法。
+  VueRouter实例化创建路由时(model: 'hash/history')即可确定使用HTML5History  HashHistory  AbstractHistory中的
+  哪种路由模式。
+  使用History中的listern监听所有要监听的路由，
+  HTML5History  HashHistory  AbstractHistory， 中监听window.popstate事件进行判断路由发生变化
+
+
+3. 监听到路由发生变化，获取到当前路由，执行History.prototype.transitionTo, 在执行confirmTransition
+    confirmTransition中会将所有的钩子函数，包括路由钩子函数，组件钩子函数，路由独享的钩子函数，异步处理组件，
+    放入到一个队列中， 在执行这个队列。
+4. 执行所有的钩子函数中，最后一个是resolveAsyncComponents方法。
+5. 路由类中有一个createRouteMap，其中就是路径与组件的对应关系  
+   router-view  router-link中，根据path取出routermap中相对应的组件。使用vue的render函数
+
+完整的路由导航解析流程：
+  1. 导航被触发
+  2. 再失活的组件内调用离开守卫函数beforeRouteLeave
+  3. 调用全局的beforeEach守卫函数
+  4. 在复用的组件内调用beforeRouterUpdate守卫函数
+  5. 在路由配种调用beforeEnter,路由独享的守卫函数，可以为单个路由配置
+  6. 解析异步路由组件
+  7. 在被激活的组件内调用beforeRouterEnter
+  8. 调用全局的beforeResolve守卫函数。使用router.beforeResolve注册一个全局守卫，与router.beforeEach相似
+      区别在于：在导航确认之前，同时在所有组件内守卫和异步路由组件解析之后，注册的守卫被调用。
+  9. 导航确认。
+  10. 调用全局的afterEach守卫函数
+  11. 触发DOM更新。
+  12. 用创建好的实例调用beforeRouterEnter守卫函数中传给 next的回调函数
+
+
+  HTML5History  HashHistory  AbstractHistory
+
+
+vue router其实质是在HTML5 historyAPI、window.onpopstate、window.onhashchange上做的封装，
+通过一定的规则映射到对应的方法上，同时通过监听变化，从而实现单页路由。
+
+
+
+
+

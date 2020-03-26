@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        
+        #canvas1 {
+            width: 20px;
+            height: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="height: 300px; width: 300px; border: 1px solid black;">
+        <canvas id="canvas" width="300px" height="300px"></canvas>
+    </div>
+</body>
+
+</html>
+<script>
+    // canvas.setAttribute("height",canvas.clientHeight);
+    // canvas.setAttribute("width",canvas.clientWidth);
+
+    let ctx = document.getElementById('canvas').getContext('2d')
+        // 填充色
+        // ctx.fillStyle = 'red'
+        // 填充色渐变
+        // let myGradient = ctx.createLinearGradient(0, 0, 100, 100)
+        // myGradient.addColorStop(0, 'green')
+        // myGradient.addColorStop(1, 'yellow')
+        // ctx.fillStyle = myGradient
+        // ctx.fillRect(20, 20, 150, 100)
+
+    // 笔尖颜色
+    // ctx.strokeStyle = 'red'
+    // let myGradient = ctx.createLinearGradient(0, 0, 150, 0)
+    // myGradient.addColorStop(0, 'green')
+    // myGradient.addColorStop(1, 'yellow')
+    // ctx.strokeStyle = myGradient
+    //     // ctx.strokeRect(20, 20, 150, 75)
+    // ctx.shadowBlur = 5
+    // ctx.shadowColor = 'black'
+    // ctx.strokeText('big breate big breast', 10, 50)
+
+    // canvas画线，画矩形
+    // // 矩形 
+    // ctx.rect(20, 20, 50, 50)
+    // let myGradient = ctx.createLinearGradient(0, 0, 100, 0)
+    // myGradient.addColorStop(0, 'green')
+    // myGradient.addColorStop(1, 'red')
+    // ctx.strokeStyle = myGradient
+    // ctx.stroke()
+    //     //
+    // ctx.beginPath();
+    // ctx.rect(80, 80, 50, 50)
+    // ctx.strokeStyle = 'red'
+    // ctx.stroke()
+    //     // 路径重绘
+    // ctx.beginPath();
+    // ctx.rect(140, 140, 50, 50)
+    // ctx.strokeStyle = 'blue'
+    // ctx.stroke()
+    // ctx.lineCap = 'round'
+    // ctx.moveTo(20, 20)
+    // ctx.lineTo(20, 200)
+    // ctx.lineTo(200, 200)
+    // ctx.lineJoin = 'bevel'
+    // ctx.lineWidth = 15
+    // ctx.stroke()
+    //     //
+    // ctx.beginPath()
+    // ctx.lineWidth = 5
+
+    // ctx.strokeRect(5, 5, 205, 205)
+    // ctx.clearRect(0, 0, 205, 205)
+
+    // ctx.beginPath()
+    // ctx.moveTo(50, 50)
+    // ctx.lineTo(200, 200)
+    // ctx.lineTo(200, 50)
+    // ctx.lineTo(50, 50)
+    // ctx.fill()
+
+    // ctx.beginPath()
+    // ctx.moveTo(5, 5)
+    // ctx.lineTo(5, 50)
+    // ctx.lineTo(50, 50)
+    // ctx.closePath()
+    // ctx.fill()
+
+    // ctx.beginPath()
+    // ctx.arc(250, 250, 40, 0, 1.8 * Math.PI)
+    // ctx.scale(2, 2)
+    // ctx.fill()
+
+
+    // ctx.beginPath()
+    // ctx.moveTo(90, 40)
+    // ctx.lineTo(50, 150)
+    // ctx.lineTo(150, 150)
+    // ctx.lineTo(150, 50)
+    // ctx.closePath()
+    // ctx.rotate(40 * Math.PI / 180);
+    // ctx.strokeRect(90, 40, 10, 10)
+
+    // ctx.beginPath()
+    // ctx.transform(1, 0, 0, 1, 150, 0);
+    // ctx.fillStyle = "red";
+    // ctx.fillRect(0, 50, 150, 50);
+
+
+
+    // 在鼠标按下的位置开始画矩形
+    // let cvs = document.getElementById('canvas')
+    // cvs.addEventListener('mousedown', mouseDown, false)
+    // cvs.addEventListener('mouseup', mouseUp, false)
+    // cvs.addEventListener('mousemove', mouseMove, false)
+    // let rect = {}
+    // let drag = false
+
+    // function mouseDown(e) {
+    //     rect.startX = e.pageX - cvs.offsetLeft
+    //     rect.startY = e.pageY - cvs.offsetTop
+    //     drag = true
+    // }
+
+    // function mouseUp() {
+    //     drag = false
+
+    // }
+
+    // function mouseMove(e) {
+    //     if (drag) {
+    //         rect.w = (e.pageX - cvs.offsetLeft) - rect.startX
+    //         rect.h = (e.pageY - cvs.offsetTop) - rect.startY
+    //         ctx.clearRect(0, 0, 300, 300)
+    //         drawRect()
+    //     }
+    // }
+
+    // function drawRect(style) {
+    //     if (style === 'fill') {
+    //         ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h)
+    //     } else {
+    //         ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h)
+    //     }
+    // }
+
+
+
+
+
+    // canvas写字
+    // ctx.font = ' oblique small-caps 30px Arial'
+    // ctx.textAlign = "right"
+    // ctx.fillText('fsfs', 50, 50)
+    // ctx.strokeText('123456', 100, 100)
+</script>

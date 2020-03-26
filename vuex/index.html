@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <button-counter></button-counter>
+    </div>
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="./vuex.js"></script>
+<script>
+    Vue.use(Vuex)
+    Vue.component('button-counter', {
+        data: function() {
+            return {
+
+            }
+        },
+        computed: {
+            count() {
+                return this.$store.state.count
+            }
+        },
+        methods: {
+            changeCount() {
+                this.$store.commit('changeCount')
+            }
+        },
+        template: '<button v-on:click="changeCount">You clicked me {{ count }} times.</button>'
+    })
+
+    let state = {
+        count: 0
+    }
+    let mutations = {
+        changeCount(state) {
+            state.count++
+        }
+    }
+    let actionss = {
+        changeCount({
+            commit,
+            state
+        }) {
+            commit('changeCount')
+        }
+    }
+    let s = {
+        state,
+        mutations,
+        actionss
+    }
+    let modules = {
+        modules: {
+            user: {
+                state,
+                mutations,
+                actionss
+            },
+            login: {
+                state,
+                mutations,
+                actionss
+            }
+        }
+    }
+    new Vue({
+        el: '#app',
+        store: new Vuex.Store({
+            s
+        })
+    })
+    console.log(new Vuex.Store({}))
+</script>
+
+<script>
+    let arr = [{
+        key: 1
+    }, {
+        key: 2
+    }]
+</script>

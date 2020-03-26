@@ -1,0 +1,10 @@
+.footer{
+  display: flex;
+  height: 50px;
+  justify-content: space-around;
+  align-items: center;
+  p{
+    width: 25%;
+    cursor: pointer;
+  }
+}

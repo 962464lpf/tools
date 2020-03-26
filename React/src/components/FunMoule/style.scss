@@ -1,0 +1,15 @@
+.fun-module {
+  .ant-row {
+    div {
+      background: transparent;
+      border: 0;
+      .gutter-box {
+        padding: 5px 10px;
+        background: white;
+        height: 100%;
+        border-radius: 15px;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+}
