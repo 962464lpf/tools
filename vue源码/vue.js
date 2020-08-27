@@ -670,9 +670,11 @@
   }
 
   /*  */
-
+  // 全局的警告函数，提示函数， 组件追踪函数（追踪到具体的一个组件），格式化组价名称
+  // 先复制为一个空函数，后边进行重新赋值函数
   var warn = noop;
   var tip = noop;
+  // 组件追踪函数（追踪到具体的一个组件名称）
   var generateComponentTrace = noop; // work around flow check
   var formatComponentName = noop;
 
@@ -688,13 +690,15 @@
         })
         .replace(/[-_]/g, '');
     };
-
+    //  msg:错误信息 vm： vue实例
     warn = function (msg, vm) {
+      // 如果有vue实例则追踪到当前组件的名称
       var trace = vm ? generateComponentTrace(vm) : '';
 
       if (config.warnHandler) {
         config.warnHandler.call(null, msg, vm, trace);
       } else if (hasConsole && !config.silent) {
+        
         console.error('[Vue warn]: ' + msg + trace);
       }
     };
@@ -707,15 +711,16 @@
       }
     };
 
+    // 格式化组件名称  eg: fd-fd => FdFd   fdfd => Fdfd
     formatComponentName = function (vm, includeFile) {
+      // 根组件实例
       if (vm.$root === vm) {
         return '<Root>';
       }
+      // 子组件实例配置
       var options =
-        typeof vm === 'function' && vm.cid != null
-          ? vm.options
-          : vm._isVue
-          ? vm.$options || vm.constructor.options
+        typeof vm === 'function' && vm.cid != null ? vm.options
+          : vm._isVue ? vm.$options || vm.constructor.options
           : vm;
       var name = options.name || options._componentTag;
       var file = options.__file;
@@ -730,6 +735,7 @@
       );
     };
 
+    // 复制，不用for循环减少循环次数,提升性能，所用次数log2为底n的对数次 + 1
     var repeat = function (str, n) {
       var res = '';
       while (n) {
@@ -809,6 +815,7 @@
 
   Dep.prototype.depend = function depend() {
     if (Dep.target) {
+      // this指dep实例
       Dep.target.addDep(this);
     }
   };
@@ -941,6 +948,7 @@
    */
 
   var arrayProto = Array.prototype;
+  // 将arrMethods这个对象中的数组方法重新定义，执行方法可以监测
   var arrayMethods = Object.create(arrayProto);
 
   var methodsToPatch = [
@@ -956,36 +964,42 @@
   /**
    * Intercept mutating methods and emit events
    */
+  // 将array的一些方法复制到arrayMethods对象中，使用这个对象中的方法时会被监测
   methodsToPatch.forEach(function (method) {
     // cache original method
     var original = arrayProto[method];
-    def(arrayMethods, method, function mutator() {
-      var args = [],
-        len = arguments.length;
-      while (len--) args[len] = arguments[len];
-
-      var result = original.apply(this, args);
-      var ob = this.__ob__;
-      var inserted;
-      switch (method) {
-        case 'push':
-        case 'unshift':
-          inserted = args;
-          break;
-        case 'splice':
-          inserted = args.slice(2);
-          break;
+    def(arrayMethods, method, 
+      function mutator() {
+        var args = [],
+          len = arguments.length;
+        while (len--) args[len] = arguments[len];
+        // 执行原生的方法
+        var result = original.apply(this, args);
+        // 监测执行，观察订阅的数据
+        var ob = this.__ob__;
+        var inserted;
+        switch (method) {
+          case 'push':
+          case 'unshift':
+            inserted = args;
+            break;
+          case 'splice':
+            inserted = args.slice(2);
+            break;
+        }
+        if (inserted) {
+          ob.observeArray(inserted);
+        }
+        // notify change
+        ob.dep.notify();
+        return result;
       }
-      if (inserted) {
-        ob.observeArray(inserted);
-      }
-      // notify change
-      ob.dep.notify();
-      return result;
-    });
+    );
   });
 
-  /*  */
+  /* 
+    ['push', 'pop']
+  */
 
   var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 
@@ -1010,14 +1024,18 @@
     this.dep = new Dep();
     this.vmCount = 0;
     def(value, '__ob__', this);
+    // 需要观察的数据是一个数组
     if (Array.isArray(value)) {
+      // 重新定义数组中的默认方法，改为自己定义的，可以监测的数组
       if (hasProto) {
         protoAugment(value, arrayMethods);
       } else {
         copyAugment(value, arrayMethods, arrayKeys);
       }
+      // 将数组中的每一个值进行观察
       this.observeArray(value);
     } else {
+      // 对象，对每一个值进行监测，对数组中的每一个值进行观察
       this.walk(value);
     }
   };
@@ -1027,6 +1045,7 @@
    * getter/setters. This method should only be called when
    * value type is Object.
    */
+  // 将对象中的每一个值进行观察
   Observer.prototype.walk = function walk(obj) {
     var keys = Object.keys(obj);
     for (var i = 0; i < keys.length; i++) {
@@ -1037,6 +1056,7 @@
   /**
    * Observe a list of Array items.
    */
+  // 将数组中的每一个值进行观察
   Observer.prototype.observeArray = function observeArray(items) {
     for (var i = 0, l = items.length; i < l; i++) {
       observe(items[i]);
@@ -1072,20 +1092,29 @@
    * returns the new observer if successfully observed,
    * or the existing observer if the value already has one.
    */
+  // 将一个值作为可观察的对象
   function observe(value, asRootData) {
+    // 是一个对象，并且不是VNode的实例
     if (!isObject(value) || value instanceof VNode) {
       return;
     }
     var ob;
+    // 对象含有__ob__属性 并且该对象已经被创建了观察
     if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
       ob = value.__ob__;
     } else if (
+      // 允许被观察
       shouldObserve &&
+      // 不是服务器端渲染
       !isServerRendering() &&
+      // 是一个数组，或者是一个普通的对象
       (Array.isArray(value) || isPlainObject(value)) &&
+      // 这个值可以被扩展
       Object.isExtensible(value) &&
+      // val不是一个vue实例
       !value._isVue
     ) {
+      // 将value进行观察
       ob = new Observer(value);
     }
     if (asRootData && ob) {
@@ -1100,27 +1129,35 @@
   function defineReactive$$1(obj, key, val, customSetter, shallow) {
     var dep = new Dep();
 
+    // 返回obj对应的key在obj的描述，{value: 1, wirteAble: true, ...} 无则返回undefined
     var property = Object.getOwnPropertyDescriptor(obj, key);
     if (property && property.configurable === false) {
       return;
     }
 
     // cater for pre-defined getter/setters
+    // 
     var getter = property && property.get;
     var setter = property && property.set;
+    // 没有定义get
     if ((!getter || setter) && arguments.length === 2) {
       val = obj[key];
     }
 
+    // 对为观察的每一个值进行递归观察，最后返回观察的对象
     var childOb = !shallow && observe(val);
+    // 重新定义obj中的key的get，set方法，可以再改变值，获取值时可以及时的通知相关地方，（双向绑定）
     Object.defineProperty(obj, key, {
       enumerable: true,
       configurable: true,
       get: function reactiveGetter() {
+        // 值的自有属性get方法
         var value = getter ? getter.call(obj) : val;
+        // 触发创建dep时的depend函数
         if (Dep.target) {
           dep.depend();
           if (childOb) {
+            // 触发了观察者 watcher
             childOb.dep.depend();
             if (Array.isArray(value)) {
               dependArray(value);
@@ -1130,6 +1167,7 @@
         return value;
       },
       set: function reactiveSetter(newVal) {
+        // debugger
         var value = getter ? getter.call(obj) : val;
         /* eslint-disable no-self-compare */
         if (newVal === value || (newVal !== newVal && value !== value)) {
@@ -1159,7 +1197,10 @@
    * triggers change notification if the property doesn't
    * already exist.
    */
+  // 在一个对象（target）中，查询一个属性（key），并重新赋值（val）
+  // 重置属性值，执行dep.notify(),通知
   function set(target, key, val) {
+    
     if (isUndef(target) || isPrimitive(target)) {
       warn(
         'Cannot set reactive property on undefined, null, or primitive value: ' +
@@ -1168,6 +1209,7 @@
     }
     if (Array.isArray(target) && isValidArrayIndex(key)) {
       target.length = Math.max(target.length, key);
+      // 将第key项替换为val
       target.splice(key, 1, val);
       return val;
     }
@@ -1175,6 +1217,7 @@
       target[key] = val;
       return val;
     }
+    // target是一个可观察的对象
     var ob = target.__ob__;
     if (target._isVue || (ob && ob.vmCount)) {
       warn(
@@ -1194,6 +1237,8 @@
 
   /**
    * Delete a property and trigger change if necessary.
+     删除属性值，执行dep.notify(),通知
+   * 
    */
   function del(target, key) {
     if (isUndef(target) || isPrimitive(target)) {
@@ -1228,6 +1273,7 @@
    * Collect dependencies on array elements when the array is touched, since
    * we cannot intercept array element access like property getters.
    */
+  // 数组改变时触发dep.depend()
   function dependArray(value) {
     for (var e = void 0, i = 0, l = value.length; i < l; i++) {
       e = value[i];
@@ -1245,6 +1291,8 @@
    * how to merge a parent option value and a child option
    * value into the final value.
    */
+  // 将父组件与子组件的值进行合并的策略处理函数 {}
+  // {data: fun, mounted: fun, propsData: fun。。。。}
   var strats = config.optionMergeStrategies;
 
   /**
@@ -1260,12 +1308,15 @@
             'creation with the `new` keyword.'
         );
       }
+      // 子元素存在，则使用子元素，不存在则是父元素
       return defaultStrat(parent, child);
     };
+
   }
 
   /**
    * Helper that recursively merges two data objects together.
+   * 递归的将两个数据合并3·
    */
   function mergeData(to, from) {
     if (!from) {
@@ -1283,7 +1334,9 @@
       }
       toVal = to[key];
       fromVal = from[key];
+      // to中没有from的key，to中添加属性
       if (!hasOwn(to, key)) {
+        // to中设置一个属性，这个属性就会执行一些列的监测操作，并执行to.dep.notify(),通知与to相关的值
         set(to, key, fromVal);
       } else if (
         toVal !== fromVal &&
@@ -1300,6 +1353,7 @@
    * Data
    */
   function mergeDataOrFn(parentVal, childVal, vm) {
+    // 没有实例
     if (!vm) {
       // in a Vue.extend merge, both should be functions
       if (!childVal) {
@@ -1337,6 +1391,8 @@
     }
   }
 
+  // strats: el = propsData    data
+  // 将两个实例或两个数据进行合并
   strats.data = function (parentVal, childVal, vm) {
     if (!vm) {
       if (childVal && typeof childVal !== 'function') {
@@ -1354,22 +1410,37 @@
 
     return mergeDataOrFn(parentVal, childVal, vm);
   };
-
   /**
    * Hooks and props are merged as arrays.
+   * if (childVal) {
+      if(parentVal) {
+        parentVal.concat(childVal)
+      } else if (Array.isArray(childVal)) {
+        childVal
+      } else {
+        [childVal]
+      }
+    } else {
+      parentVal
+    }
    */
   function mergeHook(parentVal, childVal) {
-    var res = childVal
-      ? parentVal
-        ? parentVal.concat(childVal)
-        : Array.isArray(childVal)
-        ? childVal
-        : [childVal]
-      : parentVal;
+    // 判断是不是有childVal，没有res = childVal，  有则返回childVal的数组形式
+    var res = childVal?
+        parentVal?
+        parentVal.concat(childVal) : 
+        Array.isArray(childVal)?
+        childVal: 
+        [childVal]: 
+        parentVal;
+    // 去重之后的hooks
     return res ? dedupeHooks(res) : res;
   }
 
+  
+
   function dedupeHooks(hooks) {
+    // 去重hooks
     var res = [];
     for (var i = 0; i < hooks.length; i++) {
       if (res.indexOf(hooks[i]) === -1) {
@@ -1379,6 +1450,8 @@
     return res;
   }
 
+  // 策略对象添加hook strats = {data: fun, propsData: fun, beforeMount: fun, mounted: fun}
+  // strats.mounted = mergeHook(parnetInstance, childInstance)
   LIFECYCLE_HOOKS.forEach(function (hook) {
     strats[hook] = mergeHook;
   });
@@ -1390,26 +1463,30 @@
    * a three-way merge between constructor options, instance
    * options and parent options.
    */
+  // 将多个资源进行整合，相同的直接覆盖
   function mergeAssets(parentVal, childVal, vm, key) {
     var res = Object.create(parentVal || null);
     if (childVal) {
+      // 检查childVal的类型
       assertObjectType(key, childVal, vm);
+      // 将childVal的值添加到res对象中
       return extend(res, childVal);
     } else {
       return res;
     }
   }
-
+  
+  // component , 指令directive  过滤器 filter
   ASSET_TYPES.forEach(function (type) {
     strats[type + 's'] = mergeAssets;
   });
-
   /**
    * Watchers.
    *
    * Watchers hashes should not overwrite one
    * another, so we merge them as arrays.
    */
+  // 将父元素与子元素的数据进行整合
   strats.watch = function (parentVal, childVal, vm, key) {
     // work around Firefox's Object.prototype.watch...
     if (parentVal === nativeWatch) {
@@ -1467,6 +1544,8 @@
     }
     return ret;
   };
+
+  // 合并数据
   strats.provide = mergeDataOrFn;
 
   /**
@@ -1478,6 +1557,7 @@
 
   /**
    * Validate component names
+   * 检查组件名称
    */
   function checkComponents(options) {
     for (var key in options.components) {
@@ -1498,6 +1578,7 @@
           'should conform to valid custom element name in html5 specification.'
       );
     }
+    // isBuiltInTag 判断name是否是slot component, 判断定义的组件名称是不是html中的名称
     if (isBuiltInTag(name) || config.isReservedTag(name)) {
       warn(
         'Do not use built-in or reserved HTML elements as component ' +
@@ -1511,6 +1592,7 @@
    * Ensure all props option syntax are normalized into the
    * Object-based format.
    */
+  // 将所有的props规范化
   function normalizeProps(options, vm) {
     var props = options.props;
     if (!props) {
@@ -1592,7 +1674,8 @@
       }
     }
   }
-
+  
+  // assertObjectType(key, childVal, vm);
   function assertObjectType(name, value, vm) {
     if (!isPlainObject(value)) {
       warn(
@@ -1611,6 +1694,7 @@
    * Merge two option objects into a new one.
    * Core utility used in both instantiation and inheritance.
    */
+  // 将两个实例进行合并
   function mergeOptions(parent, child, vm) {
     {
       checkComponents(child);
@@ -1642,6 +1726,7 @@
     var options = {};
     var key;
     for (key in parent) {
+      // 将strat中的字段与parent中的相同字段进行合并
       mergeField(key);
     }
     for (key in child) {
@@ -1691,11 +1776,13 @@
 
   function validateProp(key, propOptions, propsData, vm) {
     var prop = propOptions[key];
+    // 自己定义的key肯定不是propsdata中的key
     var absent = !hasOwn(propsData, key);
     var value = propsData[key];
-    // boolean casting
+    // boolean casting  array  boolean
     var booleanIndex = getTypeIndex(Boolean, prop.type);
     if (booleanIndex > -1) {
+      // 没有定义default
       if (absent && !hasOwn(prop, 'default')) {
         value = false;
       } else if (value === '' || value === hyphenate(key)) {
@@ -1889,7 +1976,8 @@
       return '' + value;
     }
   }
-
+  
+  // 判断value是否与 string number boolean是否相等
   function isExplicable(value) {
     var explicitTypes = ['string', 'number', 'boolean'];
     return explicitTypes.some(function (elem) {
@@ -1897,6 +1985,7 @@
     });
   }
 
+  // 判断参数是不是boolean类型
   function isBoolean() {
     var args = [],
       len = arguments.length;
@@ -2068,8 +2157,10 @@
     };
   }
 
+  // this.$nextTick(()=> {this.state = true})
   function nextTick(cb, ctx) {
     var _resolve;
+    // 添加callback
     callbacks.push(function () {
       if (cb) {
         try {
@@ -2083,6 +2174,7 @@
     });
     if (!pending) {
       pending = true;
+      // 执行回调函数
       timerFunc();
     }
     // $flow-disable-line
@@ -2095,10 +2187,12 @@
 
   /*  */
 
+  // 执行浏览器性能的函数
   var mark;
   var measure;
 
   {
+    // 浏览器自带的性api
     var perf = inBrowser && window.performance;
     /* istanbul ignore if */
     if (
@@ -2125,6 +2219,7 @@
   var initProxy;
 
   {
+    // 创建一个对象，对象的key是map函数的字符串参数，makeMap函数返回一个函数，目的查看返回函数的参数是不是在makeMap创建的对象内
     var allowedGlobals = makeMap(
       'Infinity,undefined,NaN,isFinite,isNaN,' +
         'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
