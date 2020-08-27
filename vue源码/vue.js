@@ -2027,6 +2027,14 @@
     }
   }
 
+  /**
+   * 调用错误处理
+   * @param {*} handler 调用createFnInvoker传进来的待调用的函数
+   * @param {*} context 
+   * @param {*} args createFnInvoker调用返回函数invoker的参数
+   * @param {*} vm  实例
+   * @param {*} info  v-on handler
+   */
   function invokeWithErrorHandling(handler, context, args, vm, info) {
     var res;
     try {
@@ -2254,14 +2262,19 @@
       );
     };
 
+    // 用户创建一个操作的自定义行为
+    // 第一个参数是一个对象，第二个参数是操作这个对象时的自定义操作
     var hasProxy = typeof Proxy !== 'undefined' && isNative(Proxy);
 
     if (hasProxy) {
       var isBuiltInModifier = makeMap(
         'stop,prevent,self,ctrl,shift,alt,meta,exact'
       );
+      // 使用Proxy基于config.keyCodes创建了一个对象，在给这个对象设置值得时候进行判断
+      // 不能设置是提示错误，可以设置时进行设置并返回true
       config.keyCodes = new Proxy(config.keyCodes, {
         set: function set(target, key, value) {
+          // 如果key在系统key中报错
           if (isBuiltInModifier(key)) {
             warn(
               'Avoid overwriting built-in modifier in config.keyCodes: .' + key
@@ -2275,6 +2288,7 @@
       });
     }
 
+    // Proxy中使用in的自定义处理函数  eg： a in proxy  触发
     var hasHandler = {
       has: function has(target, key) {
         var has = key in target;
@@ -2336,6 +2350,7 @@
     seenObjects.clear();
   }
 
+  // 目的是将val（已被监测）的dep.id添加到一个set中（不重复的数组中）
   function _traverse(val, seen) {
     var i, keys;
     var isA = Array.isArray(val);
@@ -2367,8 +2382,28 @@
     }
   }
 
-  /*  */
-
+  /* 
+    1. 返回一个回调函数，可以查看cached函数中的{}
+    2. 执行返回的回调函数func(str) => 返回{}.str的值，不存在时则赋值
+    结果：
+    第一次执行normalizeEvent
+    name = &1234
+      {
+        name: 1234,
+        once: &1234,
+        capture: &1234,
+        passive: true,
+      }
+    第二次执行normalizeEvent时
+    name = !1234
+    {
+        name: !1234,
+        once: !1234,
+        capture: 1234,
+        passive: true,
+      }
+  */
+ 
   var normalizeEvent = cached(function (name) {
     var passive = name.charAt(0) === '&';
     name = passive ? name.slice(1) : name;
@@ -2384,11 +2419,14 @@
     };
   });
 
+  // 创建函数调用 
+  // 执行所有的fns，并做错误处理
   function createFnInvoker(fns, vm) {
     function invoker() {
       var arguments$1 = arguments;
 
       var fns = invoker.fns;
+      // 执行函数，并做错误提示
       if (Array.isArray(fns)) {
         var cloned = fns.slice();
         for (var i = 0; i < cloned.length; i++) {
